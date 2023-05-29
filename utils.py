@@ -1,7 +1,6 @@
 import re
 from io import BytesIO
-from typing import Any, Dict, List
-
+from typing import Any, Dict, List, Union
 import docx2txt
 import streamlit as st
 from langchain.chains.qa_with_sources import load_qa_with_sources_chain
@@ -52,7 +51,7 @@ def parse_txt(file: BytesIO) -> str:
 
 
 @st.cache_data()
-def text_to_docs(text: str | List[str]) -> List[Document]:
+def text_to_docs(text: Union[str, List[str]]) -> List[Document]:
     """Converts a string or list of strings to a list of Documents
     with metadata."""
     if isinstance(text, str):
@@ -78,7 +77,7 @@ def text_to_docs(text: str | List[str]) -> List[Document]:
             doc = Document(
                 page_content=chunk, metadata={"page": doc.metadata["page"], "chunk": i}
             )
-            # Add sources a metadata
+            # Add sources as metadata
             doc.metadata["source"] = f"{doc.metadata['page']}-{doc.metadata['chunk']}"
             doc_chunks.append(doc)
     return doc_chunks
@@ -143,6 +142,7 @@ def get_answer(_docs: List[Document], query: str) -> Dict[str, Any]:
     )
     return answer
 
+
 @st.cache_data()
 def get_sources(answer: Dict[str, Any], _docs: List[Document]) -> List[Document]:
     """Gets the source documents for an answer."""
@@ -158,7 +158,7 @@ def get_sources(answer: Dict[str, Any], _docs: List[Document]) -> List[Document]
     return source_docs
 
 
-def wrap_text_in_html(text: str | List[str]) -> str:
+def wrap_text_in_html(text: Union[str, List[str]]) -> str:
     """Wraps each text block separated by newlines in <p> tags"""
     if isinstance(text, list):
         # Add horizontal rules between pages
