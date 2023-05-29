@@ -1,0 +1,8 @@
+streamlit
+langchain
+faiss-cpu
+openai
+docx2txt
+pillow
+pypdf
+tenacity
